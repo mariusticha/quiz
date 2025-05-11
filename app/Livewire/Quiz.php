@@ -28,15 +28,21 @@ class Quiz extends Component
         $questions = collect();
 
         foreach ($persons as $person) {
-            // Get 3 other random persons for multiple choice options
-            $otherPersons = $persons->where('id', '!=', $person->id)->random(3);
+            // Get other persons for multiple choice options
+            $otherPersons = $persons->where('id', '!=', $person->id);
 
-            // Create different types of questions for this person
+            // For both job and party questions, use all available other options
+            $jobOptions = $otherPersons->pluck('job')->unique();
+            $jobOptions = $jobOptions->push($person->job)->shuffle()->values();
+
+            $partyOptions = $otherPersons->pluck('political_party')->unique();
+            $partyOptions = $partyOptions->push($person->political_party)->shuffle()->values();
+
             $questions->push([
                 'type' => 'job',
                 'question' => "What is {$person->name}'s job?",
                 'correct_answer' => $person->job,
-                'options' => $otherPersons->pluck('job')->push($person->job)->shuffle()->values()->all(),
+                'options' => $jobOptions,
                 'person_id' => $person->id,
             ]);
 
@@ -44,13 +50,12 @@ class Quiz extends Component
                 'type' => 'party',
                 'question' => "Which political party does {$person->name} belong to?",
                 'correct_answer' => $person->political_party,
-                'options' => $otherPersons->pluck('political_party')->push($person->political_party)->shuffle()->values()->all(),
+                'options' => $partyOptions,
                 'person_id' => $person->id,
             ]);
         }
 
         $this->questions = $questions->shuffle()->values()->all();
-        // Initialize empty answers array
         $this->answers = array_fill(0, count($this->questions), null);
     }
 
@@ -83,7 +88,6 @@ class Quiz extends Component
 
     public function completeQuiz()
     {
-        // Check if any questions are unanswered
         if (in_array(null, $this->answers, true)) {
             $this->showError = true;
             return;
