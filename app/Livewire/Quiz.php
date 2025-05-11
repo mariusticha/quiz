@@ -14,6 +14,7 @@ class Quiz extends Component
     public $answers = [];
     public $startTime;
     public $isComplete = false;
+    public $showError = false;
 
     public function mount()
     {
@@ -49,29 +50,48 @@ class Quiz extends Component
         }
 
         $this->questions = $questions->shuffle()->values()->all();
+        // Initialize empty answers array
+        $this->answers = array_fill(0, count($this->questions), null);
     }
 
-    public function submitAnswer($answer)
+    public function selectAnswer($answer)
     {
-        $this->answers[] = [
-            'question_index' => $this->currentQuestionIndex,
-            'given_answer' => $answer,
-            'correct_answer' => $this->questions[$this->currentQuestionIndex]['correct_answer'],
-        ];
+        $this->answers[$this->currentQuestionIndex] = $answer;
+        $this->showError = false;
+    }
 
-        if ($this->currentQuestionIndex + 1 < count($this->questions)) {
-            $this->currentQuestionIndex++;
-        } else {
-            $this->completeQuiz();
+    public function previousQuestion()
+    {
+        if ($this->currentQuestionIndex > 0) {
+            $this->currentQuestionIndex--;
+            $this->showError = false;
         }
     }
 
-    private function completeQuiz()
+    public function nextQuestion()
     {
+        if ($this->answers[$this->currentQuestionIndex] === null) {
+            $this->showError = true;
+            return;
+        }
+
+        if ($this->currentQuestionIndex + 1 < count($this->questions)) {
+            $this->currentQuestionIndex++;
+            $this->showError = false;
+        }
+    }
+
+    public function completeQuiz()
+    {
+        // Check if any questions are unanswered
+        if (in_array(null, $this->answers, true)) {
+            $this->showError = true;
+            return;
+        }
+
         $this->isComplete = true;
-        $correctAnswers = collect($this->answers)->filter(
-            fn($answer) =>
-            $answer['given_answer'] === $answer['correct_answer']
+        $correctAnswers = collect($this->answers)->filter(fn ($answer, $index) => 
+            $answer === $this->questions[$index]['correct_answer']
         )->count();
 
         QuizAttempt::create([
