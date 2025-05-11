@@ -90,7 +90,8 @@ class Quiz extends Component
         }
 
         $this->isComplete = true;
-        $correctAnswers = collect($this->answers)->filter(fn ($answer, $index) => 
+        $correctAnswers = collect($this->answers)->filter(
+            fn($answer, $index) =>
             $answer === $this->questions[$index]['correct_answer']
         )->count();
 

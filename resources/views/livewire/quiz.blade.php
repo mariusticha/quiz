@@ -4,7 +4,7 @@
             <div class="mb-4 flex justify-between items-center">
                 <span class="text-gray-600 dark:text-gray-400">Question {{ $currentQuestionIndex + 1 }} of {{ count($questions) }}</span>
                 <div class="flex items-center space-x-2">
-                    <button 
+                    <button
                         wire:click="previousQuestion"
                         @class([
                             'px-4 py-2 rounded-lg transition',
@@ -15,7 +15,7 @@
                     >
                         Previous
                     </button>
-                    <button 
+                    <button
                         wire:click="{{ $currentQuestionIndex + 1 < count($questions) ? 'nextQuestion' : 'completeQuiz' }}"
                         @class([
                             'px-4 py-2 rounded-lg transition',
@@ -64,7 +64,7 @@
                 <p class="text-gray-600 dark:text-gray-400">
                     Time taken: {{ now()->diffInSeconds($startTime) }} seconds
                 </p>
-                <a href="{{ route('quiz.start') }}" 
+                <a href="{{ route('quiz.start') }}"
                    class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
                     Start New Quiz
                 </a>
