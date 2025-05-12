@@ -21,49 +21,31 @@ class DatabaseSeeder extends Seeder
         // Create additional random users
         User::factory(3)->create();
 
-        // Create real German politicians
+        // Create real German politicians (Kabinett Merz, as of May 6, 2025)
         $politicians = [
             [
-                'name' => 'Olaf Scholz',
-                'job' => 'Chancellor',
-                'birth_date' => '1958-06-14',
-                'political_party' => 'SPD',
-            ],
-            [
                 'name' => 'Friedrich Merz',
-                'job' => 'Opposition Leader',
+                'job' => 'Chancellor',
                 'birth_date' => '1955-11-11',
                 'political_party' => 'CDU',
             ],
             [
-                'name' => 'Annalena Baerbock',
-                'job' => 'Minister of Foreign Affairs',
-                'birth_date' => '1980-12-15',
-                'political_party' => 'Die Grünen',
+                'name' => 'Lars Klingbeil',
+                'job' => 'Vice Chancellor and Minister of Finance',
+                'birth_date' => '1978-02-23',
+                'political_party' => 'SPD',
             ],
             [
-                'name' => 'Christian Lindner',
-                'job' => 'Minister of Finance',
-                'birth_date' => '1979-01-07',
-                'political_party' => 'FDP',
-            ],
-            [
-                'name' => 'Robert Habeck',
-                'job' => 'Minister of Economic Affairs',
-                'birth_date' => '1969-09-02',
-                'political_party' => 'Die Grünen',
-            ],
-            [
-                'name' => 'Nancy Faeser',
+                'name' => 'Alexander Dobrindt',
                 'job' => 'Minister of the Interior',
-                'birth_date' => '1970-07-13',
-                'political_party' => 'SPD',
+                'birth_date' => '1970-06-07',
+                'political_party' => 'CSU',
             ],
             [
-                'name' => 'Karl Lauterbach',
-                'job' => 'Minister of Health',
-                'birth_date' => '1963-02-21',
-                'political_party' => 'SPD',
+                'name' => 'Johann Wadephul',
+                'job' => 'Minister of Foreign Affairs',
+                'birth_date' => '1963-02-10',
+                'political_party' => 'CDU',
             ],
             [
                 'name' => 'Boris Pistorius',
@@ -72,16 +54,82 @@ class DatabaseSeeder extends Seeder
                 'political_party' => 'SPD',
             ],
             [
-                'name' => 'Markus Söder',
-                'job' => 'Minister President of Bavaria',
-                'birth_date' => '1967-01-05',
+                'name' => 'Katherina Reiche',
+                'job' => 'Minister of Economy and Energy',
+                'birth_date' => '1973-07-16',
+                'political_party' => 'CDU',
+            ],
+            [
+                'name' => 'Dorothee Bär',
+                'job' => 'Minister of Research and Technology',
+                'birth_date' => '1978-04-19',
                 'political_party' => 'CSU',
             ],
             [
-                'name' => 'Saskia Esken',
-                'job' => 'Party Co-Leader',
-                'birth_date' => '1961-08-28',
+                'name' => 'Stefanie Hubig',
+                'job' => 'Minister of Justice',
+                'birth_date' => '1968-12-15',
                 'political_party' => 'SPD',
+            ],
+            [
+                'name' => 'Karin Prien',
+                'job' => 'Minister of Education and Family Affairs',
+                'birth_date' => '1965-06-26',
+                'political_party' => 'CDU',
+            ],
+            [
+                'name' => 'Bärbel Bas',
+                'job' => 'Minister of Labor and Social Affairs',
+                'birth_date' => '1968-05-03',
+                'political_party' => 'SPD',
+            ],
+            [
+                'name' => 'Karsten Wildberger',
+                'job' => 'Minister of Digital Affairs',
+                'birth_date' => '1969-09-10',
+                'political_party' => 'CDU',
+            ],
+            [
+                'name' => 'Patrick Schnieder',
+                'job' => 'Minister of Transport',
+                'birth_date' => '1968-05-01',
+                'political_party' => 'CDU',
+            ],
+            [
+                'name' => 'Carsten Schneider',
+                'job' => 'Minister of Environment and Climate',
+                'birth_date' => '1976-01-23',
+                'political_party' => 'SPD',
+            ],
+            [
+                'name' => 'Nina Warken',
+                'job' => 'Minister of Health',
+                'birth_date' => '1979-05-15',
+                'political_party' => 'CDU',
+            ],
+            [
+                'name' => 'Alois Rainer',
+                'job' => 'Minister of Agriculture',
+                'birth_date' => '1965-05-25',
+                'political_party' => 'CSU',
+            ],
+            [
+                'name' => 'Reem Alabali-Radovan',
+                'job' => 'Minister of Economic Cooperation and Development',
+                'birth_date' => '1990-01-06',
+                'political_party' => 'SPD',
+            ],
+            [
+                'name' => 'Verena Hubertz',
+                'job' => 'Minister of Housing and Urban Development',
+                'birth_date' => '1987-10-07',
+                'political_party' => 'SPD',
+            ],
+            [
+                'name' => 'Thorsten Frei',
+                'job' => 'Chief of Staff',
+                'birth_date' => '1973-05-08',
+                'political_party' => 'CDU',
             ],
         ];
 
