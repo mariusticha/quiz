@@ -9,6 +9,8 @@ class Person extends Model
 {
     use HasFactory;
 
+    protected $table = 'persons';
+
     protected $casts = [
         'birth_date' => 'date',
     ];
