@@ -38,101 +38,116 @@ class Quiz extends Component
             ->values();
     }
 
+    private function getQuestionForPerson(Person $person, $persons, $questionType = null)
+    {
+        $otherPersons = $persons->where('id', '!=', $person->id);
+
+        // Get all possible question types for this person
+        $availableTypes = ['job'];  // Job question is always available
+
+        // Party question available if we have more than one unique party
+        $uniqueParties = $persons->pluck('political_party')->unique();
+        if ($uniqueParties->count() > 1) {
+            $availableTypes[] = 'party';
+        }
+
+        // Image questions available if person has image and we have enough other images
+        if ($person->image_path) {
+            $otherPersonsWithImages = $otherPersons->filter(fn($p) => !empty($p->image_path));
+            if ($otherPersonsWithImages->count() >= 2) {
+                $availableTypes = array_merge($availableTypes, ['select_image', 'identify_person', 'identify_job']);
+            }
+        }
+
+        // Use provided question type or randomly select one
+        $type = $questionType ?? $availableTypes[array_rand($availableTypes)];
+
+        switch ($type) {
+            case 'party':
+                $options = $uniqueParties
+                    ->filter(fn($party) => $party !== $person->political_party)
+                    ->push($person->political_party)
+                    ->shuffle()
+                    ->values();
+
+                return [
+                    'type' => 'party',
+                    'question' => "Which political party does {$person->name} belong to?",
+                    'correct_answer' => $person->political_party,
+                    'options' => $options,
+                    'person_id' => $person->id,
+                ];
+
+            case 'select_image':
+                $imageOptions = $this->getRandomOptions(
+                    ['id' => $person->id, 'value' => $person],
+                    $otherPersonsWithImages->map(fn($p) => [
+                        'id' => $p->id,
+                        'value' => $p
+                    ]),
+                    min(3, $otherPersonsWithImages->count())
+                )->pluck('value');
+
+                return [
+                    'type' => 'select_image',
+                    'question' => "Select the image of {$person->name}",
+                    'correct_answer' => $person->image_path,
+                    'options' => $imageOptions->pluck('image_path'),
+                    'person_id' => $person->id,
+                ];
+
+            case 'identify_person':
+                $imageOptions = $this->getRandomOptions(
+                    ['id' => $person->id, 'value' => $person],
+                    $otherPersonsWithImages->map(fn($p) => [
+                        'id' => $p->id,
+                        'value' => $p
+                    ]),
+                    min(3, $otherPersonsWithImages->count())
+                )->pluck('value');
+
+                return [
+                    'type' => 'identify_person',
+                    'question' => 'Who is this person?',
+                    'image' => $person->image_path,
+                    'correct_answer' => $person->name,
+                    'options' => $imageOptions->pluck('name'),
+                    'person_id' => $person->id,
+                ];
+
+            case 'identify_job':
+            default:
+                $otherJobs = $otherPersons->map(fn($p) => [
+                    'id' => $p->id,
+                    'value' => $p->job
+                ])->unique('value');
+
+                $jobOptions = $this->getRandomOptions(
+                    ['id' => $person->id, 'value' => $person->job],
+                    $otherJobs
+                )->pluck('value');
+
+                return [
+                    'type' => 'identify_job',
+                    'question' => $type === 'identify_job'
+                        ? ("What is the role of the person in this image?")
+                        : ("What is {$person->name}'s job?"),
+                    'image' => $type === 'identify_job' ? $person->image_path : null,
+                    'correct_answer' => $person->job,
+                    'options' => $jobOptions,
+                    'person_id' => $person->id,
+                ];
+        }
+    }
+
     private function prepareQuestions()
     {
         $persons = Person::all();
         $questions = collect();
 
+        // Create one question for each person with a random question type
         foreach ($persons as $person) {
-            // Get other persons for multiple choice options
-            $otherPersons = $persons->where('id', '!=', $person->id);
-
-            // Get other jobs (excluding current person's job)
-            $otherJobs = $otherPersons->map(fn($p) => [
-                'id' => $p->id,
-                'value' => $p->job
-            ])->unique('value');
-
-            $jobOptions = $this->getRandomOptions(
-                ['id' => $person->id, 'value' => $person->job],
-                $otherJobs
-            )->pluck('value');
-
-            // For parties, get all unique parties and remove the current person's party
-            $allParties = $persons->pluck('political_party')->unique();
-            $partyOptions = $allParties
-                ->filter(fn($party) => $party !== $person->political_party)
-                ->push($person->political_party)
-                ->shuffle()
-                ->values();
-
-            // Regular text questions
-            $questions->push([
-                'type' => 'job',
-                'question' => "What is {$person->name}'s job?",
-                'correct_answer' => $person->job,
-                'options' => $jobOptions,
-                'person_id' => $person->id,
-            ]);
-
-            // Only add party question if we have more than 1 party option
-            if ($partyOptions->count() > 1) {
-                $questions->push([
-                    'type' => 'party',
-                    'question' => "Which political party does {$person->name} belong to?",
-                    'correct_answer' => $person->political_party,
-                    'options' => $partyOptions,
-                    'person_id' => $person->id,
-                ]);
-            }
-
-            // Image-based questions
-            if ($person->image_path) {
-                // Get other persons for image questions (ensuring they have images)
-                $otherPersonsWithImages = $otherPersons->filter(fn($p) => !empty($p->image_path));
-
-                // Only create image questions if we have enough other images
-                if ($otherPersonsWithImages->count() >= 2) {
-                    // For image selections, map the full person object to keep all needed data
-                    $imagePersonOptions = $this->getRandomOptions(
-                        ['id' => $person->id, 'value' => $person],
-                        $otherPersonsWithImages->map(fn($p) => [
-                            'id' => $p->id,
-                            'value' => $p
-                        ]),
-                        min(3, $otherPersonsWithImages->count()) // Limit to available unique images
-                    )->pluck('value');
-
-                    // Question: Select correct image for a name
-                    $questions->push([
-                        'type' => 'select_image',
-                        'question' => "Select the image of {$person->name}",
-                        'correct_answer' => $person->image_path,
-                        'options' => $imagePersonOptions->pluck('image_path'),
-                        'person_id' => $person->id,
-                    ]);
-
-                    // Question: Select correct name for an image
-                    $questions->push([
-                        'type' => 'identify_person',
-                        'question' => 'Who is this person?',
-                        'image' => $person->image_path,
-                        'correct_answer' => $person->name,
-                        'options' => $imagePersonOptions->pluck('name'),
-                        'person_id' => $person->id,
-                    ]);
-
-                    // Question: Select correct job for an image
-                    $questions->push([
-                        'type' => 'identify_job',
-                        'question' => 'What is this person\'s job?',
-                        'image' => $person->image_path,
-                        'correct_answer' => $person->job,
-                        'options' => $jobOptions,
-                        'person_id' => $person->id,
-                    ]);
-                }
-            }
+            $questions->push($this->getQuestionForPerson($person, $persons));
         }
 
         $this->questions = $questions->shuffle()->values()->all();
