@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\QuizAttempt;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Highscores extends Component
@@ -16,10 +18,23 @@ class Highscores extends Component
             ->get();
     }
 
+    public function viewAttempt($attemptId)
+    {
+        $attempt = QuizAttempt::findOrFail($attemptId);
+
+        // Only allow users to see their own attempts
+        if ($attempt->user_id !== Auth::id()) {
+            return;
+        }
+
+        return redirect()->route('quiz.attempt', ['attempt' => $attemptId]);
+    }
+
     public function render()
     {
         return view('livewire.highscores', [
             'highscores' => $this->getHighscores(),
+            'currentUserId' => Auth::id(),
         ]);
     }
 }

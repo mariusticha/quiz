@@ -15,7 +15,13 @@
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($highscores as $index => $attempt)
-                        <tr>
+                        <tr
+                            @if($attempt->user_id === $currentUserId)
+                                wire:click="viewAttempt({{ $attempt->id }})"
+                                class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                                title="Click to view details"
+                            @endif
+                        >
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{ $index + 1 }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{ $attempt->user->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">{{ $attempt->correct_answers }}/{{ $attempt->total_questions }}</td>

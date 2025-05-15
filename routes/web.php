@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\QuizAttemptView;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -20,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
     Route::view('/quiz', 'quiz')->name('quiz.start');
+    Route::get('/quiz/attempt/{attempt}', [\App\Http\Controllers\QuizAttemptController::class, 'show'])->name('quiz.attempt');
 });
 
 require __DIR__ . '/auth.php';
