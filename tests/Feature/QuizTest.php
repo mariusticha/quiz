@@ -2,7 +2,6 @@
 
 use App\Livewire\Quiz;
 use App\Models\Person;
-use App\Models\QuizAttempt;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -12,8 +11,8 @@ beforeEach(function () {
 
     // Create some test people for the quiz
     Person::factory()->count(3)->create([
-        'job' => fn() => fake()->randomElement(['Chancellor', 'Minister', 'Opposition Leader']),
-        'political_party' => fn() => fake()->randomElement(['SPD', 'CDU', 'Die Grünen']),
+        'job' => fn () => fake()->randomElement(['Chancellor', 'Minister', 'Opposition Leader']),
+        'political_party' => fn () => fake()->randomElement(['SPD', 'CDU', 'Die Grünen']),
     ]);
 });
 

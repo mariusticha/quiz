@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Helpers\ImageDownloader;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Database\Seeder;

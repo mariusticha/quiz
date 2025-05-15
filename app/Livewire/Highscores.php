@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\QuizAttempt;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Highscores extends Component

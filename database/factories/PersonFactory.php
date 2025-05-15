@@ -14,7 +14,7 @@ class PersonFactory extends Factory
             'Die Grünen',
             'FDP',
             'Die Linke',
-            'AfD'
+            'AfD',
         ];
 
         $jobs = [
@@ -25,7 +25,7 @@ class PersonFactory extends Factory
             'Minister of Defense',
             'Opposition Leader',
             'Member of Parliament',
-            'State Premier'
+            'State Premier',
         ];
 
         return [

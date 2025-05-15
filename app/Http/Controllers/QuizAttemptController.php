@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\QuizAttempt;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class QuizAttemptController extends Controller
@@ -19,7 +18,7 @@ class QuizAttemptController extends Controller
             'attempt' => $attempt,
             'questions' => $attempt->questions_data['questions'],
             'answers' => $attempt->questions_data['answers'],
-            'startTime' => $attempt->completed_at->subSeconds($attempt->time_taken_seconds)
+            'startTime' => $attempt->completed_at->subSeconds($attempt->time_taken_seconds),
         ]);
     }
 }

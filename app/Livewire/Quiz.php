@@ -10,10 +10,15 @@ use Livewire\Component;
 class Quiz extends Component
 {
     public $currentQuestionIndex = 0;
+
     public $questions;
+
     public $answers = [];
+
     public $startTime;
+
     public $isComplete = false;
+
     public $showError = false;
 
     public function mount()
@@ -53,7 +58,7 @@ class Quiz extends Component
 
         // Image questions available if person has image and we have enough other images
         if ($person->image_path) {
-            $otherPersonsWithImages = $otherPersons->filter(fn($p) => !empty($p->image_path));
+            $otherPersonsWithImages = $otherPersons->filter(fn ($p) => ! empty($p->image_path));
             if ($otherPersonsWithImages->count() >= 2) {
                 $availableTypes = array_merge($availableTypes, ['select_image', 'identify_person', 'identify_job']);
             }
@@ -65,7 +70,7 @@ class Quiz extends Component
         switch ($type) {
             case 'party':
                 $options = $uniqueParties
-                    ->filter(fn($party) => $party !== $person->political_party)
+                    ->filter(fn ($party) => $party !== $person->political_party)
                     ->push($person->political_party)
                     ->shuffle()
                     ->values();
@@ -81,9 +86,9 @@ class Quiz extends Component
             case 'select_image':
                 $imageOptions = $this->getRandomOptions(
                     ['id' => $person->id, 'value' => $person],
-                    $otherPersonsWithImages->map(fn($p) => [
+                    $otherPersonsWithImages->map(fn ($p) => [
                         'id' => $p->id,
-                        'value' => $p
+                        'value' => $p,
                     ]),
                     min(3, $otherPersonsWithImages->count())
                 )->pluck('value');
@@ -99,9 +104,9 @@ class Quiz extends Component
             case 'identify_person':
                 $imageOptions = $this->getRandomOptions(
                     ['id' => $person->id, 'value' => $person],
-                    $otherPersonsWithImages->map(fn($p) => [
+                    $otherPersonsWithImages->map(fn ($p) => [
                         'id' => $p->id,
-                        'value' => $p
+                        'value' => $p,
                     ]),
                     min(3, $otherPersonsWithImages->count())
                 )->pluck('value');
@@ -117,9 +122,9 @@ class Quiz extends Component
 
             case 'identify_job':
             default:
-                $otherJobs = $otherPersons->map(fn($p) => [
+                $otherJobs = $otherPersons->map(fn ($p) => [
                     'id' => $p->id,
-                    'value' => $p->job
+                    'value' => $p->job,
                 ])->unique('value');
 
                 $jobOptions = $this->getRandomOptions(
@@ -130,7 +135,7 @@ class Quiz extends Component
                 return [
                     'type' => 'identify_job',
                     'question' => $type === 'identify_job'
-                        ? ("What is the role of the person in this image?")
+                        ? ('What is the role of the person in this image?')
                         : ("What is {$person->name}'s job?"),
                     'image' => $type === 'identify_job' ? $person->image_path : null,
                     'correct_answer' => $person->job,
@@ -172,6 +177,7 @@ class Quiz extends Component
     {
         if ($this->answers[$this->currentQuestionIndex] === null) {
             $this->showError = true;
+
             return;
         }
 
@@ -185,13 +191,13 @@ class Quiz extends Component
     {
         if (in_array(null, $this->answers, true)) {
             $this->showError = true;
+
             return;
         }
 
         $this->isComplete = true;
         $correctAnswers = collect($this->answers)->filter(
-            fn($answer, $index) =>
-            $answer === $this->questions[$index]['correct_answer']
+            fn ($answer, $index) => $answer === $this->questions[$index]['correct_answer']
         )->count();
 
         QuizAttempt::create([

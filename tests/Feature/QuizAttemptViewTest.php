@@ -28,9 +28,9 @@ test('users can view their own quiz attempts from highscores', function () {
                     'correct_answer' => 'Chancellor',
                     'options' => ['Chancellor', 'Minister', 'Opposition Leader'],
                     'person_id' => 1,
-                ]
+                ],
             ],
-            'answers' => ['Chancellor']
+            'answers' => ['Chancellor'],
         ],
         'completed_at' => now(),
     ]);
@@ -60,9 +60,9 @@ test('users cannot view other users quiz attempts', function () {
                     'correct_answer' => 'Chancellor',
                     'options' => ['Chancellor', 'Minister', 'Opposition Leader'],
                     'person_id' => 1,
-                ]
+                ],
             ],
-            'answers' => ['Minister']
+            'answers' => ['Minister'],
         ],
         'completed_at' => now(),
     ]);
@@ -87,9 +87,9 @@ test('quiz attempt view shows correct attempt details', function () {
                     'correct_answer' => 'Chancellor',
                     'options' => ['Chancellor', 'Minister', 'Opposition Leader'],
                     'person_id' => 1,
-                ]
+                ],
             ],
-            'answers' => ['Chancellor']
+            'answers' => ['Chancellor'],
         ],
         'completed_at' => now(),
     ]);

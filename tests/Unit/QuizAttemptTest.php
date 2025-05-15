@@ -9,7 +9,7 @@ uses(TestCase::class, RefreshDatabase::class);
 
 test('quiz attempt has required columns', function () {
     $user = User::factory()->create();
-    
+
     $attempt = QuizAttempt::create([
         'user_id' => $user->id,
         'correct_answers' => 8,
@@ -30,7 +30,7 @@ test('quiz attempt has required columns', function () {
 
 test('quiz attempt belongs to a user', function () {
     $user = User::factory()->create();
-    
+
     $attempt = QuizAttempt::create([
         'user_id' => $user->id,
         'correct_answers' => 8,
@@ -47,13 +47,13 @@ test('quiz attempt belongs to a user', function () {
 
 test('questions data is cast to array', function () {
     $user = User::factory()->create();
-    
+
     $questionsData = [
         'questions' => [
-            ['question' => 'Test?', 'answer' => 'Test']
-        ]
+            ['question' => 'Test?', 'answer' => 'Test'],
+        ],
     ];
-    
+
     $attempt = QuizAttempt::create([
         'user_id' => $user->id,
         'correct_answers' => 8,
@@ -72,7 +72,7 @@ test('questions data is cast to array', function () {
 test('completed_at is cast to datetime', function () {
     $user = User::factory()->create();
     $now = now();
-    
+
     $attempt = QuizAttempt::create([
         'user_id' => $user->id,
         'correct_answers' => 8,

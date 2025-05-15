@@ -24,7 +24,7 @@ test('person has required columns', function () {
 
 test('birth_date is cast to carbon instance', function () {
     $person = Person::factory()->create([
-        'birth_date' => '1990-01-01'
+        'birth_date' => '1990-01-01',
     ]);
 
     expect($person->birth_date)
@@ -34,7 +34,7 @@ test('birth_date is cast to carbon instance', function () {
 
 test('person can have optional image path', function () {
     $person = Person::factory()->create([
-        'image_path' => '/path/to/image.jpg'
+        'image_path' => '/path/to/image.jpg',
     ]);
 
     expect($person->image_path)->toBe('/path/to/image.jpg');
