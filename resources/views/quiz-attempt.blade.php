@@ -10,13 +10,17 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Quiz Results</h2>
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-                        Back to Dashboard
-                    </a>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+                            Back to Dashboard
+                        </a>
+                        <a href="{{ route('quiz.start') }}" class="px-4 py-2 rounded-lg transition bg-blue-500 hover:bg-blue-600 text-white">
+                            Start New Quiz
+                        </a>
+                    </div>
                 </div>
 
-                @include('partials.quiz-results')
-                </div>
+                <x-quiz-result :$attempt></x-quiz-result>
             </div>
         </div>
     </div>

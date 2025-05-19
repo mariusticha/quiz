@@ -1,17 +1,14 @@
 <div class="space-y-6">
     <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
         <p class="text-lg text-gray-700 dark:text-gray-300">
-            {{ isset($attempt) ? 'Score: ' . $attempt->correct_answers : 'You got ' . collect($answers)->filter(fn ($answer, $index) => $answer === $questions[$index]['correct_answer'])->count() }}
-            out of {{ isset($attempt) ? $attempt->total_questions : count($questions) }} questions correct!
+            You got {{ $correctAnswersCount }} out of {{ count($questions) }} questions correct!
         </p>
         <p class="text-gray-600 dark:text-gray-400 mt-2">
-            Time taken: {{ isset($attempt) ? $attempt->time_taken_seconds : now()->diffInSeconds($startTime) }} seconds
+            Time taken: {{ abs($attempt->time_taken_seconds) }} seconds.
         </p>
-        @if(isset($attempt))
-            <p class="text-gray-600 dark:text-gray-400 mt-1">
-                Completed on: {{ $attempt->completed_at->format('F j, Y \a\t g:i a') }}
-            </p>
-        @endif
+        <p class="text-gray-600 dark:text-gray-400 mt-1">
+            Completed on: {{ $attempt->completed_at->format('F j, Y \a\t g:i a') }}
+        </p>
     </div>
 
     <div class="space-y-4">
@@ -63,12 +60,5 @@
                 </div>
             </div>
         @endforeach
-    </div>
-
-    <div class="flex justify-center mt-6">
-        <a href="{{ route('quiz.start') }}"
-           class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition">
-            Start New Quiz
-        </a>
     </div>
 </div>

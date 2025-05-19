@@ -4,30 +4,39 @@ namespace App\Livewire;
 
 use App\Models\Person;
 use App\Models\QuizAttempt;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Quiz extends Component
 {
-    public $currentQuestionIndex = 0;
+    public int $currentQuestionIndex = 0;
 
-    public $questions;
+    public array $questions;
 
-    public $answers = [];
+    public array $answers = [];
 
-    public $startTime;
+    public Carbon $startTime;
 
-    public $isComplete = false;
+    public bool $showError = false;
 
-    public $showError = false;
+    private ?int $limit = 1;
 
-    public function mount()
+    public function mount(): void
     {
         $this->startTime = now();
+
         $this->prepareQuestions();
+
+        if ($this->limit) {
+            $this->questions = array_slice($this->questions, 0, $this->limit);
+
+            $this->answers = array_slice($this->answers, 0, $this->limit);
+        }
     }
 
-    private function getRandomOptions($correctAnswer, $allOptions, $count = 3)
+    private function getRandomOptions($correctAnswer, $allOptions, $count = 3): Collection
     {
         // Get unique options excluding the correct answer
         $availableOptions = $allOptions->where('id', '!=', $correctAnswer['id']);
@@ -58,7 +67,7 @@ class Quiz extends Component
 
         // Image questions available if person has image and we have enough other images
         if ($person->image_path) {
-            $otherPersonsWithImages = $otherPersons->filter(fn ($p) => ! empty($p->image_path));
+            $otherPersonsWithImages = $otherPersons->filter(fn($p) => ! empty($p->image_path));
             if ($otherPersonsWithImages->count() >= 2) {
                 $availableTypes = array_merge($availableTypes, ['select_image', 'identify_person', 'identify_job']);
             }
@@ -70,7 +79,7 @@ class Quiz extends Component
         switch ($type) {
             case 'party':
                 $options = $uniqueParties
-                    ->filter(fn ($party) => $party !== $person->political_party)
+                    ->filter(fn($party) => $party !== $person->political_party)
                     ->push($person->political_party)
                     ->shuffle()
                     ->values();
@@ -86,7 +95,7 @@ class Quiz extends Component
             case 'select_image':
                 $imageOptions = $this->getRandomOptions(
                     ['id' => $person->id, 'value' => $person],
-                    $otherPersonsWithImages->map(fn ($p) => [
+                    $otherPersonsWithImages->map(fn($p) => [
                         'id' => $p->id,
                         'value' => $p,
                     ]),
@@ -104,7 +113,7 @@ class Quiz extends Component
             case 'identify_person':
                 $imageOptions = $this->getRandomOptions(
                     ['id' => $person->id, 'value' => $person],
-                    $otherPersonsWithImages->map(fn ($p) => [
+                    $otherPersonsWithImages->map(fn($p) => [
                         'id' => $p->id,
                         'value' => $p,
                     ]),
@@ -122,7 +131,7 @@ class Quiz extends Component
 
             case 'identify_job':
             default:
-                $otherJobs = $otherPersons->map(fn ($p) => [
+                $otherJobs = $otherPersons->map(fn($p) => [
                     'id' => $p->id,
                     'value' => $p->job,
                 ])->unique('value');
@@ -148,6 +157,7 @@ class Quiz extends Component
     private function prepareQuestions()
     {
         $persons = Person::all();
+
         $questions = collect();
 
         // Create one question for each person with a random question type
@@ -156,6 +166,7 @@ class Quiz extends Component
         }
 
         $this->questions = $questions->shuffle()->values()->all();
+
         $this->answers = array_fill(0, count($this->questions), null);
     }
 
@@ -195,21 +206,24 @@ class Quiz extends Component
             return;
         }
 
-        $this->isComplete = true;
         $correctAnswers = collect($this->answers)->filter(
-            fn ($answer, $index) => $answer === $this->questions[$index]['correct_answer']
+            fn($answer, $index) => $answer === $this->questions[$index]['correct_answer']
         )->count();
 
-        QuizAttempt::create([
+        $attempt = QuizAttempt::create([
             'user_id' => Auth::id(),
             'correct_answers' => $correctAnswers,
             'total_questions' => count($this->questions),
-            'time_taken_seconds' => now()->diffInSeconds($this->startTime),
+            'time_taken_seconds' => $this->startTime->diffInSeconds(now()),
             'questions_data' => [
                 'questions' => $this->questions,
                 'answers' => $this->answers,
             ],
             'completed_at' => now(),
+        ]);
+
+        return redirect()->route('quiz.attempt', [
+            'attempt' => $attempt,
         ]);
     }
 

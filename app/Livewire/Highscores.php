@@ -3,12 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\QuizAttempt;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Highscores extends Component
 {
-    public function getHighscores()
+    public function getHighscores(): Collection
     {
         return QuizAttempt::with('user')
             ->orderByDesc('correct_answers')
@@ -26,7 +27,9 @@ class Highscores extends Component
             return;
         }
 
-        return redirect()->route('quiz.attempt', ['attempt' => $attemptId]);
+        return redirect()->route('quiz.attempt', [
+            'attempt' => $attemptId
+        ]);
     }
 
     public function render()
