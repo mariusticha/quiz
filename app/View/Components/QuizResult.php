@@ -19,7 +19,7 @@ class QuizResult extends Component
         $questions = $this->attempt->questions_data['questions'];
 
         $correctAnswersCount = collect($answers)
-            ->filter(fn(string $answer, int $index) => $answer === $questions[$index]['correct_answer'])
+            ->filter(fn (string $answer, int $index) => $answer === $questions[$index]['correct_answer'])
             ->count();
 
         $startTime = $this->attempt->completed_at->subSeconds($this->attempt->time_taken_seconds);

@@ -28,7 +28,7 @@ class Highscores extends Component
         }
 
         return redirect()->route('quiz.attempt', [
-            'attempt' => $attemptId
+            'attempt' => $attemptId,
         ]);
     }
 

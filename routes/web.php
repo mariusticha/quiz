@@ -24,4 +24,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('quiz/attempt/{attempt}', QuizAttemptController::class)->name('quiz.attempt');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
