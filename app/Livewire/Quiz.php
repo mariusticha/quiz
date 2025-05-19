@@ -21,7 +21,7 @@ class Quiz extends Component
 
     public bool $showError = false;
 
-    private ?int $limit = 1;
+    private ?int $limit = null;
 
     public function mount(): void
     {

@@ -11,8 +11,8 @@ beforeEach(function () {
 
     // Create some test people for the quiz
     Person::factory()->count(3)->create([
-        'job' => fn () => fake()->randomElement(['Chancellor', 'Minister', 'Opposition Leader']),
-        'political_party' => fn () => fake()->randomElement(['SPD', 'CDU', 'Die Grünen']),
+        'job' => fn() => fake()->randomElement(['Chancellor', 'Minister', 'Opposition Leader']),
+        'political_party' => fn() => fake()->randomElement(['SPD', 'CDU', 'Die Grünen']),
     ]);
 });
 
@@ -58,11 +58,15 @@ test('quiz completion creates attempt record', function () {
         }
     }
 
-    // Complete the quiz
-    $component->call('completeQuiz')
-        ->assertSet('isComplete', true);
+    $this->assertDatabaseCount('quiz_attempts', 0);
 
-    // Check if attempt was recorded
+    $component->call('completeQuiz')
+        ->assertRedirect(route('quiz.attempt', [
+            'attempt' => 1
+        ]));
+
+    $this->assertDatabaseCount('quiz_attempts', 1);
+
     $this->assertDatabaseHas('quiz_attempts', [
         'user_id' => $this->user->id,
         'total_questions' => count($component->questions),
